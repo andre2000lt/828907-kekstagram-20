@@ -150,7 +150,9 @@ var getAllPhotos = function () {
   return allPhotos;
 };
 
-var renderingPhotos = function () {
+var allPhotos = getAllPhotos();
+
+var renderPhotos = function (photosMas) {
   var pictureTemplate = document.querySelector('#picture')
   .content
   .querySelector('.picture');
@@ -158,7 +160,7 @@ var renderingPhotos = function () {
   var picturesFragment = document.createDocumentFragment();
 
   for (var i = 0; i < PHOTOS_COUNT; i++) {
-    var pictureParams = getAllPhotos()[i];
+    var pictureParams = photosMas[i];
     var pictureParamSrc = pictureParams.url;
     var pictureParamLikes = pictureParams.likes;
     var pictureParamComments = pictureParams.comments;
@@ -180,4 +182,4 @@ var renderingPhotos = function () {
   pictures.appendChild(picturesFragment);
 };
 
-renderingPhotos();
+renderPhotos(allPhotos);
