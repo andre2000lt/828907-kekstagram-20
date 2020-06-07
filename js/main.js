@@ -150,8 +150,6 @@ var getAllPhotos = function () {
   return allPhotos;
 };
 
-var allPhotos = getAllPhotos();
-
 var renderPhotos = function (photosMas) {
   var pictureTemplate = document.querySelector('#picture')
   .content
@@ -182,4 +180,5 @@ var renderPhotos = function (photosMas) {
   pictures.appendChild(picturesFragment);
 };
 
+var allPhotos = getAllPhotos();
 renderPhotos(allPhotos);
