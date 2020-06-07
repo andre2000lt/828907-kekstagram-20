@@ -158,20 +158,16 @@ var renderPhotos = function (photosMas) {
   var picturesFragment = document.createDocumentFragment();
 
   for (var i = 0; i < PHOTOS_COUNT; i++) {
-    var pictureParams = photosMas[i];
-    var pictureParamSrc = pictureParams.url;
-    var pictureParamLikes = pictureParams.likes;
-    var pictureParamComments = pictureParams.comments;
-    var pictureParamCommentsCount = pictureParamComments.length;
+    var photo = photosMas[i];
 
     var picture = pictureTemplate.cloneNode(true);
     var pictureImg = picture.querySelector('.picture__img');
     var pictureComments = picture.querySelector('.picture__comments');
     var pictureLikes = picture.querySelector('.picture__likes');
 
-    pictureImg.src = pictureParamSrc;
-    pictureComments.textContent = pictureParamCommentsCount;
-    pictureLikes.textContent = pictureParamLikes;
+    pictureImg.src = photo.url;
+    pictureComments.textContent = photo.comments.length;
+    pictureLikes.textContent = photo.likes;
 
     picturesFragment.appendChild(picture);
   }
