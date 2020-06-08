@@ -231,9 +231,10 @@ var renderBigPhoto = function (photo) {
   bigPictureCommentsLoader.classList.add('hidden');
 };
 
+var body = document.querySelector('body');
+body.classList.add('modal-open');
+
 var allPhotos = getAllPhotos();
 renderPhotos(allPhotos);
 renderBigPhoto(allPhotos[0]);
 
-var body = document.querySelector('body');
-body.classList.add('modal-open');
