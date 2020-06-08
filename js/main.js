@@ -51,7 +51,8 @@ var NAMES = [
 ];
 
 var PHOTOS_COUNT = 25;
-var MAX_PHOTO_COMMENTS = 5;
+var MIN_PHOTO_COMMENTS = 5;
+var MAX_PHOTO_COMMENTS = 15;
 
 var getRandomNumber = function (min, max) {
   if (min === max) {
@@ -76,6 +77,7 @@ var getName = function () {
   return NAMES[nameIndex];
 };
 
+// Возвращает сгенерированный комментарий
 var generateComment = function () {
   var messagesNumber = getRandomNumber(1, 2);
   var comment = '';
@@ -95,6 +97,7 @@ var generateComment = function () {
   return comment;
 };
 
+// Возвращаеет объект с текстом комментария, именем автора и ссылкой на аватар
 var getPhotoComment = function () {
   var avatar = getAvatar();
   var name = getName();
@@ -108,13 +111,13 @@ var getPhotoComment = function () {
   return userComment;
 };
 
+// Генерирует массив объектов с комментариями к каждой фотографии
 var getAllPhotosComments = function () {
-
   var photoComments = [];
 
   for (var i = 0; i < PHOTOS_COUNT; i++) {
     photoComments[i] = [];
-    var currentPhotoCommentsCount = getRandomNumber(0, MAX_PHOTO_COMMENTS);
+    var currentPhotoCommentsCount = getRandomNumber(MIN_PHOTO_COMMENTS, MAX_PHOTO_COMMENTS);
     for (var j = 0; j < currentPhotoCommentsCount; j++) {
       var currentComment = getPhotoComment();
       photoComments[i].push(currentComment);
@@ -124,6 +127,7 @@ var getAllPhotosComments = function () {
   return photoComments;
 };
 
+// Возвращаеет объект фотографии с url, описанием, лайками, массивом объектов комментариев
 var getPhoto = function (photoIndex, description, likes, comments) {
   var photoObj = {
     url: 'photos/' + photoIndex + '.jpg',
@@ -135,6 +139,7 @@ var getPhoto = function (photoIndex, description, likes, comments) {
   return photoObj;
 };
 
+// Возвращаеет массив объектов всех фотографий
 var getAllPhotos = function () {
   var allPhotos = [];
   for (var i = 0; i < PHOTOS_COUNT; i++) {
@@ -150,6 +155,7 @@ var getAllPhotos = function () {
   return allPhotos;
 };
 
+// Отображает на странице все фотографии с лайками и количеством комментариев
 var renderPhotos = function (photosMas) {
   var pictureTemplate = document.querySelector('#picture')
   .content
@@ -176,5 +182,58 @@ var renderPhotos = function (photosMas) {
   pictures.appendChild(picturesFragment);
 };
 
+// Создает фрагмент с комментариями, аватарками и именами к увеличенной фотографии
+var renderCommentsFragment = function (photo) {
+  var commentsFragment = document.createDocumentFragment();
+
+  var commentTemplate = document.querySelector('#comment')
+  .content
+  .querySelector('.social__comment');
+
+  for (var i = 0; i < photo.comments.length; i++) {
+    var comment = commentTemplate.cloneNode(true);
+    var commentAvatar = comment.querySelector('img');
+    var commetMessage = comment.querySelector('.social__text');
+
+    commentAvatar.src = photo.comments[i].avatar;
+    commentAvatar.alt = photo.comments[i].name;
+    commetMessage.textContent = photo.comments[i].messsage;
+
+    commentsFragment.appendChild(comment);
+  }
+
+  return commentsFragment;
+};
+
+// Отображает увеличенную фотографию со всей связанной информацией
+var renderBigPhoto = function (photo) {
+  var bigPicture = document.querySelector('.big-picture');
+  bigPicture.classList.remove('hidden');
+
+  var bigPictureImg = bigPicture.querySelector('.big-picture__img img');
+  var bigPictureLikes = bigPicture.querySelector('.likes-count');
+  var bigPictureDescription = bigPicture.querySelector('.social__caption');
+  var bigPictureCommentsCount = bigPicture.querySelector('.comments-count');
+  var bigPictureComments = bigPicture.querySelector('.social__comments');
+
+  bigPictureImg.src = photo.url;
+  bigPictureLikes.textContent = photo.likes;
+  bigPictureDescription.textContent = photo.description;
+
+  bigPictureCommentsCount.textContent = photo.comments.length;
+  bigPictureComments.textContent = '';
+  bigPictureComments.appendChild(renderCommentsFragment(photo));
+
+  var bigPictureCommentsCounter = bigPicture.querySelector('.social__comment-count');
+  var bigPictureCommentsLoader = bigPicture.querySelector('.comments-loader');
+
+  bigPictureCommentsCounter.classList.add('hidden');
+  bigPictureCommentsLoader.classList.add('hidden');
+};
+
 var allPhotos = getAllPhotos();
 renderPhotos(allPhotos);
+renderBigPhoto(allPhotos[0]);
+
+var body = document.querySelector('body');
+body.classList.add('modal-open');
