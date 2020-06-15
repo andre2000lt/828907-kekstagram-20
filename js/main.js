@@ -54,6 +54,58 @@ var PHOTOS_COUNT = 25;
 var MIN_PHOTO_COMMENTS = 5;
 var MAX_PHOTO_COMMENTS = 15;
 
+var body = document.querySelector('body');
+
+// Окно редактирования изображения
+var editImageForm = document.querySelector('.img-upload__overlay');
+
+// Поле загрузки изображения
+var uploadFile = document.querySelector('#upload-file');
+
+// Кнопка закрытия окна редактирования изображения
+var uploadCancel = document.querySelector('#upload-cancel');
+
+// Отображает загруженное изображение
+var imgUploadPreview = document.querySelector('.img-upload__preview');
+
+// Кнопки увеличения / уменьшения загруженного изображения
+var scaleControlSmaller = document.querySelector('.scale__control--smaller');
+var scaleControlBigger = document.querySelector('.scale__control--bigger');
+
+// Поле сохраняет масштаб изображения
+var scaleControlValue = document.querySelector('.scale__control--value');
+
+// Список эффектов для изображения
+var effectsList = document.querySelector('.effects__list');
+
+// Блок с ползунком для изменения уровень эффекта
+var effectLevel = document.querySelector('.effect-level');
+
+// Ползунок изменяющий уровень эффекта
+var effectLevelPin = document.querySelector('.effect-level__pin');
+
+// Поле сохраняет уровень эффекта установленный ползунком
+var effectLevelValue = document.querySelector('.effect-level__value');
+
+// Поле для ввода хэштегов загруженной фотографии
+var textHashtags = document.querySelector('.text__hashtags');
+
+// Поле для ввода описания загруженной фотографии
+var textDescription = document.querySelector('.text__description');
+
+
+// Добавляет или удаляет body класс modal-open
+var toggleBodyClass = function (action) { // action = {add, remove}
+  if (action === 'add') {
+    if (!body.classList.contains('modal-open')) {
+      body.classList.add('modal-open');
+    }
+  } else {
+    body.classList.remove('modal-open');
+  }
+};
+
+// Возвращает случайное число от min до max
 var getRandomNumber = function (min, max) {
   if (min === max) {
     return min;
@@ -67,11 +119,13 @@ var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
+// Возвращает сгенерированный путь к аватарке
 var getAvatar = function () {
   var avatarIndex = getRandomNumber(1, 6);
   return 'img/avatar-' + avatarIndex + '.svg';
 };
 
+// Возвращает сгенерированное имя
 var getName = function () {
   var nameIndex = getRandomNumber(0, NAMES.length - 1);
   return NAMES[nameIndex];
@@ -156,7 +210,7 @@ var getAllPhotos = function () {
 };
 
 // Отображает на странице все фотографии с лайками и количеством комментариев
-var renderPhotos = function (photosMas) {
+var renderPhotos = function (photosArr) {
   var pictureTemplate = document.querySelector('#picture')
   .content
   .querySelector('.picture');
@@ -164,7 +218,7 @@ var renderPhotos = function (photosMas) {
   var picturesFragment = document.createDocumentFragment();
 
   for (var i = 0; i < PHOTOS_COUNT; i++) {
-    var photo = photosMas[i];
+    var photo = photosArr[i];
 
     var picture = pictureTemplate.cloneNode(true);
     var pictureImg = picture.querySelector('.picture__img');
@@ -229,12 +283,275 @@ var renderBigPhoto = function (photo) {
 
   bigPictureCommentsCounter.classList.add('hidden');
   bigPictureCommentsLoader.classList.add('hidden');
+
+  toggleBodyClass('add');
 };
 
-var body = document.querySelector('body');
-body.classList.add('modal-open');
+// Обработчик нажатия клавиши ESC (Для закрытия формы редактирования картинки)
+var onEditImageFormPressEsc = function (evt) {
+  if (evt.key === 'Escape') {
+    evt.preventDefault();
+    closeEditImageForm();
+  }
+};
+
+// Открывает форму редактирования картинки
+var openEditImageForm = function () {
+  editImageForm.classList.remove('hidden');
+  toggleBodyClass('add');
+  document.addEventListener('keydown', onEditImageFormPressEsc);
+};
+
+// Закрывает форму редактирования картинки
+var closeEditImageForm = function () {
+  editImageForm.classList.add('hidden');
+  toggleBodyClass('remove');
+  document.removeEventListener('keydown', onEditImageFormPressEsc);
+  uploadFile.value = '';
+};
+
+// Преобразует число в css свойство scale
+var intToScale = function (intValue) {
+  if (intValue > 100) {
+    intValue = 100;
+  }
+
+  if (intValue < 0) {
+    intValue = 0;
+  }
+
+  if (intValue !== 100) {
+    return 'scale(0.' + intValue + ')';
+  } else {
+    return 'scale(1)';
+  }
+};
+
+// Управление масштабом картинки при помощи кнопок + / -
+var changePictureScale = function () {
+  scaleControlValue.value = '100%';
+
+  scaleControlSmaller.addEventListener('click', function () {
+    var integerValue = parseInt(scaleControlValue.value, 10);
+    if (integerValue > 25) {
+      integerValue -= 25;
+      scaleControlValue.value = integerValue + '%';
+      imgUploadPreview.style.transform = intToScale(integerValue);
+    }
+  });
+
+  scaleControlBigger.addEventListener('click', function () {
+    var integerValue = parseInt(scaleControlValue.value, 10);
+    if (integerValue < 76) {
+      integerValue += 25;
+      scaleControlValue.value = integerValue + '%';
+      imgUploadPreview.style.transform = intToScale(integerValue);
+    }
+  });
+};
+
+// Добавляет элементу element класс visually-hidden
+var hideElement = function (element) {
+  if (!element.classList.contains('visually-hidden')) {
+    element.classList.add('visually-hidden');
+  }
+};
+
+// Удаляет у элемента element класс visually-hidden
+var showElement = function (element) {
+  element.classList.remove('visually-hidden');
+};
+
+// Снимает все эффекты с imgUploadPreview
+var removePictureEffects = function () {
+  var effects = ['chrome', 'sepia', 'marvin', 'phobos', 'heat'];
+  for (var i = 0; i < effects.length; i++) {
+    var effectClass = 'effects__preview--' + effects[i];
+    imgUploadPreview.classList.remove(effectClass);
+  }
+};
+
+// Конвертирует проценты в css свойство выбранного эффекта
+var convertPercentsToCssEffect = function (percentValue, effectName) {
+  var effectValue = 0;
+
+  if (effectName === 'chrome') {
+    effectValue = percentValue / 100;
+
+    return 'grayscale(' + effectValue + ')';
+  }
+
+  if (effectName === 'sepia') {
+    effectValue = percentValue / 100;
+
+    return 'sepia(' + effectValue + ')';
+  }
+
+  if (effectName === 'marvin') {
+    if (percentValue > 0) {
+      effectValue = percentValue + '%';
+    } else {
+      effectValue = percentValue;
+    }
+
+    return 'invert(' + effectValue + ')';
+  }
+
+  if (effectName === 'phobos') {
+    effectValue = percentValue * 3 / 100;
+    effectValue += 'px';
+
+    return 'blur(' + effectValue + ')';
+  }
+
+  if (effectName === 'heat') {
+    effectValue = percentValue * 2 / 100 + 1;
+
+    return 'brightness(' + effectValue + ')';
+  }
+
+  return 'none';
+};
+
+// Управление эффектами картинки imgUploadPreview
+var putEffectOnPicture = function () {
+  hideElement(effectLevel);
+
+  var selectedEffect = 'none';
+
+  effectsList.addEventListener('click', function (evt) {
+    if (evt.target.matches('input[type="radio"]')) {
+      removePictureEffects();
+      imgUploadPreview.style.filter = null;
+      selectedEffect = evt.target.value;
+      effectLevelValue.value = 100;
+
+      if (selectedEffect !== 'none') {
+        showElement(effectLevel);
+        imgUploadPreview.classList.add('effects__preview--' + selectedEffect);
+      } else {
+        hideElement(effectLevel);
+      }
+    }
+  });
+
+  effectLevelPin.addEventListener('mouseup', function (evt) {
+    var lineWidth = 453;
+    var pinX = evt.target.offsetLeft;
+    var saturation = Math.round(pinX / lineWidth * 100);
+    effectLevelValue.value = saturation;
+
+    imgUploadPreview.style.filter = convertPercentsToCssEffect(saturation, selectedEffect);
+  });
+};
+
+// Ищет одинаковые строки в массиве
+var checkSameHashtags = function (arr) {
+  for (var i = 0; i < arr.length - 1; i++) {
+    for (var j = i + 1; j < arr.length; j++) {
+      var hTagRe = new RegExp('^' + arr[i] + '$', 'i');
+      if (hTagRe.test(arr[j])) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+};
+
+// Валидация введеных хэштегов
+var checkHashtags = function () {
+  textHashtags.addEventListener('input', function () {
+    var hashTegRe = /^#[0-9a-zA-Zа-яА-я]{1,19}$/;
+    var hashTagsErrorCount = 0;
+
+    var text = textHashtags.value.trim();
+    if (text) {
+      var hashtagsArray = text.split(' ');
+
+      for (var i = 0; i < hashtagsArray.length; i++) {
+        if (!hashTegRe.test(hashtagsArray[i])) {
+          hashTagsErrorCount++;
+        }
+      }
+
+      if (hashTagsErrorCount) {
+        textHashtags.setCustomValidity('Исправьте ошибки в ' + hashTagsErrorCount + ' хэштеге');
+        textHashtags.reportValidity();
+      } else if (hashtagsArray.length > 5) {
+        textHashtags.setCustomValidity('Не больше 5 хэштегов');
+        textHashtags.reportValidity();
+      } else if (checkSameHashtags(hashtagsArray)) {
+        textHashtags.setCustomValidity('Удалите одинаковые хэштеги');
+        textHashtags.reportValidity();
+      } else {
+        textHashtags.setCustomValidity('');
+      }
+    }
+  });
+
+  textHashtags.addEventListener('focus', function () {
+    document.removeEventListener('keydown', onEditImageFormPressEsc);
+  });
+
+  textHashtags.addEventListener('blur', function () {
+    document.addEventListener('keydown', onEditImageFormPressEsc);
+  });
+};
+
+// Проверяет введеное описание к изображению на количество символов
+var checkPhotoDescription = function (simbolCount) {
+  textDescription.addEventListener('input', function () {
+    var text = textDescription.value;
+    var extraSimbols = 0;
+
+    if (text) {
+      if (text.length > simbolCount) {
+        extraSimbols = text.length - simbolCount;
+        textDescription.setCustomValidity('Удалите лишние ' + extraSimbols + ' символов');
+        textDescription.reportValidity();
+      }
+    } else {
+      textDescription.setCustomValidity('');
+    }
+  });
+
+  textDescription.addEventListener('focus', function () {
+    document.removeEventListener('keydown', onEditImageFormPressEsc);
+  });
+
+  textDescription.addEventListener('blur', function () {
+    document.addEventListener('keydown', onEditImageFormPressEsc);
+  });
+};
 
 var allPhotos = getAllPhotos();
 renderPhotos(allPhotos);
-renderBigPhoto(allPhotos[0]);
 
+// Увеличенное фото по клику на первую миниатюру ВРЕМЕННО
+var smallPicture = document.querySelector('.picture__img');
+smallPicture.addEventListener('click', function () {
+  renderBigPhoto(allPhotos[0]);
+});
+
+
+// Открытие / Закрытие формы редактирования изображения
+uploadFile.addEventListener('change', function () {
+  openEditImageForm();
+});
+
+uploadCancel.addEventListener('click', function () {
+  closeEditImageForm();
+});
+
+// Изменение масштаба изображения
+changePictureScale();
+
+// Наложение эффектов на изображение
+putEffectOnPicture();
+
+// Валидация хэштегов
+checkHashtags();
+
+// Валидация описания изображения
+checkPhotoDescription(140);
