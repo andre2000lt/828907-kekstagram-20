@@ -309,6 +309,8 @@ var onEditImageFormPressEsc = function (evt) {
 // Открывает форму редактирования картинки
 var openEditImageForm = function () {
   editImageForm.classList.remove('hidden');
+  scaleControlValue.value = '100%';
+  imgUploadPreview.style.transform = intToScale(100);
   toggleBodyClass('add');
   document.addEventListener('keydown', onEditImageFormPressEsc);
 };
@@ -498,6 +500,8 @@ var checkHashtags = function () {
       } else {
         textHashtags.setCustomValidity('');
       }
+    } else {
+      textHashtags.setCustomValidity('');
     }
   });
 
@@ -538,13 +542,16 @@ var checkPhotoDescription = function (simbolCount) {
 
 // Ищет объект фотогравии в массиве по индексу
 var findPictureById = function (arr, pictureId) {
-  for (var i = 0; i < arr.length; i++) {
-    if (arr[i].index === parseInt(pictureId, 10)) {
-      return i;
-    }
-  }
 
-  return 0;
+  var checkId = function (currentElement) {
+    return currentElement.index === parseInt(pictureId, 10);
+  };
+
+  if (arr.findIndex(checkId) !== -1) {
+    return arr.findIndex(checkId);
+  } else {
+    return 0;
+  }
 };
 
 // Увеличение миниатюр пользовательских фотографий при нажатии Enter
@@ -562,22 +569,22 @@ var enlargePictureOnEnter = function (evt) {
 var closeBigPictureOnEsc = function (evt) {
   if (evt.key === 'Escape') {
     bigPicture.classList.add('hidden');
-
+    toggleBodyClass('remove');
     document.removeEventListener('keydown', closeBigPictureOnEsc);
   }
 };
 
 // Увеличение миниатюр пользовательских фотографий на главной странице
 var enlargePicture = function () {
-  thumbnails.addEventListener('focus', function (evt) {
+  thumbnails.addEventListener('focusin', function (evt) {
     if (evt.target.className === 'picture') {
       evt.target.addEventListener('keydown', enlargePictureOnEnter);
     }
-  }, true);
+  });
 
-  thumbnails.addEventListener('blur', function (evt) {
+  thumbnails.addEventListener('focusout', function (evt) {
     evt.target.removeEventListener('keydown', enlargePictureOnEnter);
-  }, true);
+  });
 
   thumbnails.addEventListener('click', function (evt) {
     if (evt.target.className === 'picture__img') {
@@ -590,7 +597,7 @@ var enlargePicture = function () {
 
   bigPictureCancel.addEventListener('click', function () {
     bigPicture.classList.add('hidden');
-
+    toggleBodyClass('remove');
     document.removeEventListener('keydown', closeBigPictureOnEsc);
   });
 };
