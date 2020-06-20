@@ -547,11 +547,8 @@ var findPictureById = function (arr, pictureId) {
     return currentElement.index === parseInt(pictureId, 10);
   };
 
-  if (arr.findIndex(checkId) !== -1) {
-    return arr.findIndex(checkId);
-  } else {
-    return 0;
-  }
+  var index = arr.findIndex(checkId);
+  return index !== -1 ? index : 0;
 };
 
 // Увеличение миниатюр пользовательских фотографий при нажатии Enter
