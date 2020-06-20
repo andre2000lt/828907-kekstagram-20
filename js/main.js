@@ -93,6 +93,15 @@ var textHashtags = document.querySelector('.text__hashtags');
 // Поле для ввода описания загруженной фотографии
 var textDescription = document.querySelector('.text__description');
 
+// Миниатюры изображений на главной странице
+var thumbnails = document.querySelector('.pictures');
+
+// Модальное окно с изображением увеличенной миниатюры
+var bigPicture = document.querySelector('.big-picture');
+
+// Кнопка закрытия окна с изображением увеличенной миниатюры
+var bigPictureCancel = document.querySelector('.big-picture__cancel');
+
 
 // Добавляет или удаляет body класс modal-open
 var toggleBodyClass = function (action) { // action = {add, remove}
@@ -184,6 +193,7 @@ var getAllPhotosComments = function () {
 // Возвращаеет объект фотографии с url, описанием, лайками, массивом объектов комментариев
 var getPhoto = function (photoIndex, description, likes, comments) {
   var photoObj = {
+    index: photoIndex,
     url: 'photos/' + photoIndex + '.jpg',
     description: description,
     likes: likes,
@@ -225,6 +235,7 @@ var renderPhotos = function (photosArr) {
     var pictureComments = picture.querySelector('.picture__comments');
     var pictureLikes = picture.querySelector('.picture__likes');
 
+    pictureImg.dataset.index = photo.index;
     pictureImg.src = photo.url;
     pictureComments.textContent = photo.comments.length;
     pictureLikes.textContent = photo.likes;
@@ -261,7 +272,7 @@ var renderCommentsFragment = function (photo) {
 
 // Отображает увеличенную фотографию со всей связанной информацией
 var renderBigPhoto = function (photo) {
-  var bigPicture = document.querySelector('.big-picture');
+  bigPicture = document.querySelector('.big-picture');
   bigPicture.classList.remove('hidden');
 
   var bigPictureImg = bigPicture.querySelector('.big-picture__img img');
@@ -298,6 +309,8 @@ var onEditImageFormPressEsc = function (evt) {
 // Открывает форму редактирования картинки
 var openEditImageForm = function () {
   editImageForm.classList.remove('hidden');
+  scaleControlValue.value = '100%';
+  imgUploadPreview.style.transform = intToScale(100);
   toggleBodyClass('add');
   document.addEventListener('keydown', onEditImageFormPressEsc);
 };
@@ -487,6 +500,8 @@ var checkHashtags = function () {
       } else {
         textHashtags.setCustomValidity('');
       }
+    } else {
+      textHashtags.setCustomValidity('');
     }
   });
 
@@ -525,15 +540,73 @@ var checkPhotoDescription = function (simbolCount) {
   });
 };
 
+// Ищет объект фотогравии в массиве по индексу
+var findPictureById = function (arr, pictureId) {
+
+  var checkId = function (currentElement) {
+    return currentElement.index === parseInt(pictureId, 10);
+  };
+
+  var index = arr.findIndex(checkId);
+  return index !== -1 ? index : 0;
+};
+
+// Увеличение миниатюр пользовательских фотографий при нажатии Enter
+var enlargePictureOnEnter = function (evt) {
+  if (evt.key === 'Enter') {
+    var photo = evt.target.children[0];
+    var pictureId = findPictureById(allPhotos, photo.dataset.index);
+    renderBigPhoto(allPhotos[pictureId]);
+
+    document.addEventListener('keydown', closeBigPictureOnEsc);
+  }
+};
+
+// Обработчик нажатия клавиши ESC - закрывает окно увеличенной миниатюры
+var closeBigPictureOnEsc = function (evt) {
+  if (evt.key === 'Escape') {
+    bigPicture.classList.add('hidden');
+    toggleBodyClass('remove');
+    document.removeEventListener('keydown', closeBigPictureOnEsc);
+  }
+};
+
+// Увеличение миниатюр пользовательских фотографий на главной странице
+var enlargePicture = function () {
+  thumbnails.addEventListener('focusin', function (evt) {
+    if (evt.target.className === 'picture') {
+      evt.target.addEventListener('keydown', enlargePictureOnEnter);
+    }
+  });
+
+  thumbnails.addEventListener('focusout', function (evt) {
+    evt.target.removeEventListener('keydown', enlargePictureOnEnter);
+  });
+
+  thumbnails.addEventListener('click', function (evt) {
+    if (evt.target.className === 'picture__img') {
+      var pictureId = findPictureById(allPhotos, evt.target.dataset.index);
+      renderBigPhoto(allPhotos[pictureId]);
+
+      document.addEventListener('keydown', closeBigPictureOnEsc);
+    }
+  });
+
+  bigPictureCancel.addEventListener('click', function () {
+    bigPicture.classList.add('hidden');
+    toggleBodyClass('remove');
+    document.removeEventListener('keydown', closeBigPictureOnEsc);
+  });
+};
+
+// Генерируем массив объектов изображений
 var allPhotos = getAllPhotos();
+
+// Рендерим миниатюры из массива объектов изображений
 renderPhotos(allPhotos);
 
-// Увеличенное фото по клику на первую миниатюру ВРЕМЕННО
-var smallPicture = document.querySelector('.picture__img');
-smallPicture.addEventListener('click', function () {
-  renderBigPhoto(allPhotos[0]);
-});
-
+// Увеличиваем выбранную миниатюру по клику или нажатию Enter
+enlargePicture();
 
 // Открытие / Закрытие формы редактирования изображения
 uploadFile.addEventListener('change', function () {
@@ -555,3 +628,5 @@ checkHashtags();
 
 // Валидация описания изображения
 checkPhotoDescription(140);
+
+
