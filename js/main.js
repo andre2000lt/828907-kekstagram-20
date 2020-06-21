@@ -628,5 +628,3 @@ checkHashtags();
 
 // Валидация описания изображения
 checkPhotoDescription(140);
-
-
