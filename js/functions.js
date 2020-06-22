@@ -3,7 +3,7 @@
 (function () {
   var body = document.querySelector('body');
 
-  window.general = {
+  window.functions = {
     // Возвращает случайное число от min до max
     getRandomNumber: function (min, max) {
       if (min === max) {

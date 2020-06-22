@@ -12,7 +12,7 @@
     closeBigPictureOnEsc: function (evt) {
       if (evt.key === 'Escape') {
         bigPicture.classList.add('hidden');
-        window.general.toggleBodyClass('remove');
+        window.functions.toggleBodyClass('remove');
         document.removeEventListener('keydown', this.closeBigPictureOnEsc);
       }
     },
@@ -64,11 +64,11 @@
       bigPictureCommentsCounter.classList.add('hidden');
       bigPictureCommentsLoader.classList.add('hidden');
 
-      window.general.toggleBodyClass('add');
+      window.functions.toggleBodyClass('add');
 
       bigPictureCancel.addEventListener('click', function () {
         bigPicture.classList.add('hidden');
-        window.general.toggleBodyClass('remove');
+        window.functions.toggleBodyClass('remove');
         document.removeEventListener('keydown', window.fullPicture.closeBigPictureOnEsc);
       });
     }

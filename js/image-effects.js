@@ -31,7 +31,7 @@
         if (integerValue > 25) {
           integerValue -= 25;
           scaleControlValue.value = integerValue + '%';
-          imgUploadPreview.style.transform = window.general.intToScale(integerValue);
+          imgUploadPreview.style.transform = window.functions.intToScale(integerValue);
         }
       });
 
@@ -40,7 +40,7 @@
         if (integerValue < 76) {
           integerValue += 25;
           scaleControlValue.value = integerValue + '%';
-          imgUploadPreview.style.transform = window.general.intToScale(integerValue);
+          imgUploadPreview.style.transform = window.functions.intToScale(integerValue);
         }
       });
     },
@@ -98,7 +98,7 @@
 
     // Управление эффектами картинки imgUploadPreview
     putEffectOnPicture: function () {
-      window.general.hideElement(effectLevel);
+      window.functions.hideElement(effectLevel);
 
       var selectedEffect = 'none';
 
@@ -110,10 +110,10 @@
           effectLevelValue.value = 100;
 
           if (selectedEffect !== 'none') {
-            window.general.showElement(effectLevel);
+            window.functions.showElement(effectLevel);
             imgUploadPreview.classList.add('effects__preview--' + selectedEffect);
           } else {
-            window.general.hideElement(effectLevel);
+            window.functions.hideElement(effectLevel);
           }
         }
       });

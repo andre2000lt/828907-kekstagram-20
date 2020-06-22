@@ -7,7 +7,7 @@
   // Поле для ввода описания загруженной фотографии
   var textDescription = document.querySelector('.text__description');
 
-  window.validateForm = {
+  window.form = {
     // Валидация введеных хэштегов
     checkHashtags: function () {
       textHashtags.addEventListener('input', function () {
@@ -30,7 +30,7 @@
           } else if (hashtagsArray.length > 5) {
             textHashtags.setCustomValidity('Не больше 5 хэштегов');
             textHashtags.reportValidity();
-          } else if (window.general.checkSameHashtags(hashtagsArray)) {
+          } else if (window.functions.checkSameHashtags(hashtagsArray)) {
             textHashtags.setCustomValidity('Удалите одинаковые хэштеги');
             textHashtags.reportValidity();
           } else {

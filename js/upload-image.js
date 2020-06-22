@@ -26,15 +26,15 @@
     openEditImageForm: function () {
       editImageForm.classList.remove('hidden');
       scaleControlValue.value = '100%';
-      imgUploadPreview.style.transform = window.general.intToScale(100);
-      window.general.toggleBodyClass('add');
+      imgUploadPreview.style.transform = window.functions.intToScale(100);
+      window.functions.toggleBodyClass('add');
       document.addEventListener('keydown', this.onEditImageFormPressEsc);
     },
 
     // Закрывает форму редактирования картинки
     closeEditImageForm: function () {
       editImageForm.classList.add('hidden');
-      window.general.toggleBodyClass('remove');
+      window.functions.toggleBodyClass('remove');
       document.removeEventListener('keydown', this.onEditImageFormPressEsc);
       uploadFile.value = '';
     }

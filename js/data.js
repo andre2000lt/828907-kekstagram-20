@@ -59,19 +59,19 @@
 
     // Возвращает сгенерированный путь к аватарке
     getAvatar: function () {
-      var avatarIndex = window.general.getRandomNumber(1, 6);
+      var avatarIndex = window.functions.getRandomNumber(1, 6);
       return 'img/avatar-' + avatarIndex + '.svg';
     },
 
     // Возвращает сгенерированное имя
     getName: function () {
-      var nameIndex = window.general.getRandomNumber(0, NAMES.length - 1);
+      var nameIndex = window.functions.getRandomNumber(0, NAMES.length - 1);
       return NAMES[nameIndex];
     },
 
     // Возвращает сгенерированный комментарий
     generateComment: function () {
-      var messagesNumber = window.general.getRandomNumber(1, 2);
+      var messagesNumber = window.functions.getRandomNumber(1, 2);
       var comment = '';
       var commentsCopy = [];
 
@@ -80,7 +80,7 @@
       }
 
       for (var j = 0; j < messagesNumber; j++) {
-        var messageIndex = window.general.getRandomNumber(0, commentsCopy.length - 1);
+        var messageIndex = window.functions.getRandomNumber(0, commentsCopy.length - 1);
 
         comment += ' ' + commentsCopy[messageIndex];
         commentsCopy.splice(messageIndex, 1);
@@ -109,7 +109,7 @@
 
       for (var i = 0; i < this.PHOTOS_COUNT; i++) {
         photoComments[i] = [];
-        var currentPhotoCommentsCount = window.general.getRandomNumber(MIN_PHOTO_COMMENTS, MAX_PHOTO_COMMENTS);
+        var currentPhotoCommentsCount = window.functions.getRandomNumber(MIN_PHOTO_COMMENTS, MAX_PHOTO_COMMENTS);
         for (var j = 0; j < currentPhotoCommentsCount; j++) {
           var currentComment = this.getPhotoComment();
           photoComments[i].push(currentComment);
@@ -138,7 +138,7 @@
       for (var i = 0; i < this.PHOTOS_COUNT; i++) {
         var photoIndex = i + 1;
         var description = DESCRIPTIONS[i];
-        var likes = window.general.getRandomNumber(15, 200);
+        var likes = window.functions.getRandomNumber(15, 200);
         var comments = this.getAllPhotosComments()[i];
 
         var currentPhoto = this.getPhoto(photoIndex, description, likes, comments);
