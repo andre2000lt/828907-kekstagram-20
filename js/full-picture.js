@@ -32,7 +32,7 @@
 
         commentAvatar.src = photo.comments[i].avatar;
         commentAvatar.alt = photo.comments[i].name;
-        commetMessage.textContent = photo.comments[i].messsage;
+        commetMessage.textContent = photo.comments[i].message;
 
         commentsFragment.appendChild(comment);
       }

@@ -24,6 +24,8 @@
   var effectLevelValue = document.querySelector('.effect-level__value');
 
   window.imageEffects = {
+    selectedEffect: 'none',
+
     // Управление масштабом картинки при помощи кнопок + / -
     changePictureScale: function () {
       scaleControlSmaller.addEventListener('click', function () {
@@ -52,6 +54,14 @@
         var effectClass = 'effects__preview--' + effects[i];
         imgUploadPreview.classList.remove(effectClass);
       }
+
+      imgUploadPreview.style.filter = null;
+      effectLevelValue.value = 100;
+    },
+
+    returnDefaultParams: function () {
+      window.imageEffects.removePictureEffects();
+      window.imageEffects.selectedEffect = 'none';
     },
 
     // Конвертирует проценты в css свойство выбранного эффекта
@@ -98,20 +108,15 @@
 
     // Управление эффектами картинки imgUploadPreview
     putEffectOnPicture: function () {
-      window.functions.hideElement(effectLevel);
-
-      var selectedEffect = 'none';
 
       effectsList.addEventListener('click', function (evt) {
         if (evt.target.matches('input[type="radio"]')) {
           window.imageEffects.removePictureEffects();
-          imgUploadPreview.style.filter = null;
-          selectedEffect = evt.target.value;
-          effectLevelValue.value = 100;
+          window.imageEffects.selectedEffect = evt.target.value;
 
-          if (selectedEffect !== 'none') {
+          if (window.imageEffects.selectedEffect !== 'none') {
             window.functions.showElement(effectLevel);
-            imgUploadPreview.classList.add('effects__preview--' + selectedEffect);
+            imgUploadPreview.classList.add('effects__preview--' + window.imageEffects.selectedEffect);
           } else {
             window.functions.hideElement(effectLevel);
           }
@@ -124,7 +129,7 @@
         var saturation = Math.round(pinX / lineWidth * 100);
         effectLevelValue.value = saturation;
 
-        imgUploadPreview.style.filter = window.imageEffects.convertPercentsToCssEffect(saturation, selectedEffect);
+        imgUploadPreview.style.filter = window.imageEffects.convertPercentsToCssEffect(saturation, window.imageEffects.selectedEffect);
       });
     }
 

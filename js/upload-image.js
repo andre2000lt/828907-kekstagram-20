@@ -29,6 +29,7 @@
       imgUploadPreview.style.transform = window.functions.intToScale(100);
       window.functions.toggleBodyClass('add');
       document.addEventListener('keydown', this.onEditImageFormPressEsc);
+      window.imageEffects.returnDefaultParams();
     },
 
     // Закрывает форму редактирования картинки
@@ -37,6 +38,7 @@
       window.functions.toggleBodyClass('remove');
       document.removeEventListener('keydown', this.onEditImageFormPressEsc);
       uploadFile.value = '';
+      window.imageEffects.returnDefaultParams();
     }
 
   };
