@@ -39,10 +39,10 @@
   window.imageEffects.putEffectOnPicture();
 
   // Валидация хэштегов
-  window.validateForm.checkHashtags();
+  window.form.checkHashtags();
 
   // Валидация описания изображения
-  window.validateForm.checkPhotoDescription(140);
+  window.form.checkPhotoDescription(140);
 })();
 
 

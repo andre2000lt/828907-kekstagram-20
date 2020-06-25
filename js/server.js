@@ -12,7 +12,6 @@
         } else {
           onSuccess(xhr.response);
         }
-
       });
 
       xhr.responseType = 'json';
