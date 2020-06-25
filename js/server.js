@@ -18,8 +18,6 @@
       xhr.responseType = 'json';
       xhr.open('GET', url);
       xhr.send();
-
-      return xhr.response;
     }
 
   };
