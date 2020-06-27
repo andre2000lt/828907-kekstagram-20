@@ -1,14 +1,22 @@
 'use strict';
 
 (function () {
-  // Генерируем массив объектов изображений
-  var allPhotos = window.data.getAllPhotos();
+  var onSuccessfulDataLoaded = function (serverData) {
+    // Генерируем массив объектов изображений
+    var allPhotos = window.data.getAllPhotos(serverData);
 
-  // Рендерим миниатюры из массива объектов изображений
-  window.thumbnails.renderPhotos(allPhotos);
+    // Рендерим миниатюры из массива объектов изображений
+    window.thumbnails.renderPhotos(allPhotos);
 
-  // Увеличиваем выбранную миниатюру по клику или нажатию Enter
-  window.thumbnails.enlargePicture(allPhotos);
+    // Увеличиваем выбранную миниатюру по клику или нажатию Enter
+    window.thumbnails.enlargePicture(allPhotos);
+  };
+
+  var onUnsuccessfulDataLoaded = function (errorCode, errorText) {
+    throw new Error(window.serverErrors.getErrorByCode(errorCode, errorText));
+  };
+
+  window.server.getDataFromServer('https://javascript.pages.academy/kekstagram/data', onSuccessfulDataLoaded, onUnsuccessfulDataLoaded);
 
   // Открытие / Закрытие формы редактирования изображения
   // Поле загрузки изображения
