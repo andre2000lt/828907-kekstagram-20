@@ -31,6 +31,33 @@
   // Поле сохраняет уровень эффекта установленный ползунком
   var effectLevelValue = document.querySelector('.effect-level__value');
 
+  var startX;
+
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    var shift = startX - moveEvt.clientX;
+    startX = moveEvt.clientX;
+
+    var newPinPosition = effectLevelPin.offsetLeft - shift;
+    if (newPinPosition >= 0 && newPinPosition <= EFFECT_LINE_WIDTH) {
+      effectLevelPin.style.left = newPinPosition + 'px';
+      effectLevelDepth.style.width = newPinPosition + 'px';
+
+      var saturation = Math.round((newPinPosition) / EFFECT_LINE_WIDTH * 100);
+      effectLevelValue.value = saturation;
+
+      imgUploadPreview.style.filter = window.imageEffects.convertPercentsToCssEffect(saturation, window.imageEffects.selectedEffect);
+    }
+  };
+
   window.imageEffects = {
     selectedEffect: 'none',
 
@@ -144,32 +171,7 @@
       effectLevelPin.addEventListener('mousedown', function (evt) {
         evt.preventDefault();
 
-        var startX = evt.clientX;
-
-        var onMouseMove = function (moveEvt) {
-          moveEvt.preventDefault();
-
-          var shift = startX - moveEvt.clientX;
-          startX = moveEvt.clientX;
-
-          var newPinPosition = effectLevelPin.offsetLeft - shift;
-          if (newPinPosition >= 0 && newPinPosition <= EFFECT_LINE_WIDTH) {
-            effectLevelPin.style.left = newPinPosition + 'px';
-            effectLevelDepth.style.width = newPinPosition + 'px';
-
-            var saturation = Math.round((newPinPosition) / EFFECT_LINE_WIDTH * 100);
-            effectLevelValue.value = saturation;
-
-            imgUploadPreview.style.filter = window.imageEffects.convertPercentsToCssEffect(saturation, window.imageEffects.selectedEffect);
-          }
-        };
-
-        var onMouseUp = function (upEvt) {
-          upEvt.preventDefault();
-
-          document.removeEventListener('mousemove', onMouseMove);
-          document.removeEventListener('mouseup', onMouseUp);
-        };
+        startX = evt.clientX;
 
         document.addEventListener('mousemove', onMouseMove);
         document.addEventListener('mouseup', onMouseUp);
