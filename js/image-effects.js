@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var EFFECT_LINE_WIDTH = 453;
+
   // Отображает загруженное изображение
   var imgUploadPreview = document.querySelector('.img-upload__preview');
 
@@ -14,14 +16,47 @@
   // Список эффектов для изображения
   var effectsList = document.querySelector('.effects__list');
 
+  // Список эффектов для изображения
+  var effectNoneRadio = document.querySelector('#effect-none');
+
   // Блок с ползунком для изменения уровень эффекта
   var effectLevel = document.querySelector('.effect-level');
+
+  // Индикатор глубины уровня эффекта
+  var effectLevelDepth = document.querySelector('.effect-level__depth');
 
   // Ползунок изменяющий уровень эффекта
   var effectLevelPin = document.querySelector('.effect-level__pin');
 
   // Поле сохраняет уровень эффекта установленный ползунком
   var effectLevelValue = document.querySelector('.effect-level__value');
+
+  var startX;
+
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    var shift = startX - moveEvt.clientX;
+    startX = moveEvt.clientX;
+
+    var newPinPosition = effectLevelPin.offsetLeft - shift;
+    if (newPinPosition >= 0 && newPinPosition <= EFFECT_LINE_WIDTH) {
+      effectLevelPin.style.left = newPinPosition + 'px';
+      effectLevelDepth.style.width = newPinPosition + 'px';
+
+      var saturation = Math.round((newPinPosition) / EFFECT_LINE_WIDTH * 100);
+      effectLevelValue.value = saturation;
+
+      imgUploadPreview.style.filter = window.imageEffects.convertPercentsToCssEffect(saturation, window.imageEffects.selectedEffect);
+    }
+  };
 
   window.imageEffects = {
     selectedEffect: 'none',
@@ -56,12 +91,19 @@
       }
 
       imgUploadPreview.style.filter = null;
+      effectLevelPin.style.left = EFFECT_LINE_WIDTH + 'px';
+      effectLevelDepth.style.width = EFFECT_LINE_WIDTH + 'px';
       effectLevelValue.value = 100;
     },
 
     returnDefaultParams: function () {
       window.imageEffects.removePictureEffects();
       window.imageEffects.selectedEffect = 'none';
+      window.functions.hideElement(effectLevel);
+      effectNoneRadio.checked = true;
+
+      scaleControlValue.value = '100%';
+      imgUploadPreview.style.transform = window.functions.intToScale(100);
     },
 
     // Конвертирует проценты в css свойство выбранного эффекта
@@ -116,6 +158,9 @@
 
           if (window.imageEffects.selectedEffect !== 'none') {
             window.functions.showElement(effectLevel);
+            effectLevelPin.style.left = EFFECT_LINE_WIDTH + 'px';
+            effectLevelDepth.style.width = EFFECT_LINE_WIDTH + 'px';
+
             imgUploadPreview.classList.add('effects__preview--' + window.imageEffects.selectedEffect);
           } else {
             window.functions.hideElement(effectLevel);
@@ -123,13 +168,13 @@
         }
       });
 
-      effectLevelPin.addEventListener('mouseup', function (evt) {
-        var lineWidth = 453;
-        var pinX = evt.target.offsetLeft;
-        var saturation = Math.round(pinX / lineWidth * 100);
-        effectLevelValue.value = saturation;
+      effectLevelPin.addEventListener('mousedown', function (evt) {
+        evt.preventDefault();
 
-        imgUploadPreview.style.filter = window.imageEffects.convertPercentsToCssEffect(saturation, window.imageEffects.selectedEffect);
+        startX = evt.clientX;
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
       });
     }
 

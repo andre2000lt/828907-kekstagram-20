@@ -16,8 +16,7 @@
 
     // Возвращаеет массив объектов всех фотографий
     getAllPhotos: function (serverData) {
-      var data = improveServerData(serverData);
-      return data;
+      return improveServerData(serverData);
     },
 
     // Ищет объект фотогравии в массиве по индексу
