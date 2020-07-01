@@ -4,16 +4,24 @@
   // Миниатюры изображений на главной странице
   var thumbnails = document.querySelector('.pictures');
 
+  var removePhotos = function () {
+    var photos = document.querySelectorAll('.picture');
+    photos.forEach(function (photo) {
+      thumbnails.removeChild(photo);
+    });
+  };
+
   window.thumbnails = {
     // Отображает на странице все фотографии с лайками и количеством комментариев
     renderPhotos: function (photosArr) {
+      removePhotos();
       var pictureTemplate = document.querySelector('#picture')
       .content
       .querySelector('.picture');
 
       var picturesFragment = document.createDocumentFragment();
 
-      for (var i = 0; i < window.data.PHOTOS_COUNT; i++) {
+      for (var i = 0; i < photosArr.length; i++) {
         var photo = photosArr[i];
 
         var picture = pictureTemplate.cloneNode(true);
@@ -29,8 +37,10 @@
         picturesFragment.appendChild(picture);
       }
 
-      var pictures = document.querySelector('.pictures');
-      pictures.appendChild(picturesFragment);
+      thumbnails.appendChild(picturesFragment);
+
+      // Увеличиваем выбранную миниатюру по клику или нажатию Enter
+      window.thumbnails.enlargePicture(photosArr);
     },
 
     // Увеличение миниатюр пользовательских фотографий на главной странице
