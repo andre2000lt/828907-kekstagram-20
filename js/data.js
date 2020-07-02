@@ -28,10 +28,10 @@
       return index !== -1 ? index : 0;
     },
 
-    getRandomPhotos: function (photos) {
+    getRandomPhotos: function (photos, photosCount) {
       var photosCopy = photos.slice();
       var newArray = [];
-      for (var i = 0; i < 10; i++) {
+      for (var i = 0; i < photosCount; i++) {
         var index = window.functions.getRandomNumber(0, photosCopy.length - 1);
         newArray.push(photosCopy[index]);
         photosCopy.splice(index, 1);

@@ -21,7 +21,7 @@
           filteredPhotos = allPhotos;
           break;
         case 'filter-random':
-          filteredPhotos = window.data.getRandomPhotos(allPhotos);
+          filteredPhotos = window.data.getRandomPhotos(allPhotos, 10);
           break;
         case 'filter-discussed':
           filteredPhotos = window.data.sortPhotosByComments(allPhotos);
