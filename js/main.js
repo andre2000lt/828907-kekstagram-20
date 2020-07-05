@@ -55,6 +55,17 @@
     throw new Error(window.serverErrors.getErrorByCode(errorCode, errorText));
   };
 
+  var onSuccessfulDataUploaded = function () {
+    window.uploadImage.closeEditImageForm();
+    window.uploadImage.showImgUploadSuccessMessage();
+  };
+
+  var onUnsuccessfulDataUploaded = function (errorCode, errorText) {
+    window.uploadImage.closeEditImageForm();
+    window.uploadImage.showImgUploadErrorMessage();
+    throw new Error(window.serverErrors.getErrorByCode(errorCode, errorText));
+  };
+
   window.server.getDataFromServer('https://javascript.pages.academy/kekstagram/data', onSuccessfulDataLoaded, onUnsuccessfulDataLoaded);
 
   // Открытие / Закрытие формы редактирования изображения
@@ -82,6 +93,16 @@
 
   // Валидация описания изображения
   window.form.checkPhotoDescription(140);
+
+  var imgUploadForm = document.querySelector('.img-upload__form');
+  imgUploadForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+
+    var url = 'https://javascript.pages.academy/kekstagram';
+    var formData = new FormData(imgUploadForm);
+    window.server.uploadDataToServer(url, formData, onSuccessfulDataUploaded, onUnsuccessfulDataUploaded);
+  });
+
 })();
 
 
