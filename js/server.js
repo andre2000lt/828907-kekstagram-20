@@ -9,9 +9,9 @@
       xhr.addEventListener('load', function () {
         if (xhr.status !== 200) {
           onError(xhr.status, xhr.statusText);
-        } else {
-          onSuccess(xhr.response);
         }
+
+        onSuccess(xhr.response);
       });
 
       xhr.responseType = 'json';

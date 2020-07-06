@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var onSuccessfulDataLoaded = function (serverData) {
+  var onSuccessLoad = function (serverData) {
     // Генерируем массив объектов изображений
     var allPhotos = window.data.getAllPhotos(serverData);
 
@@ -51,22 +51,22 @@
     });
   };
 
-  var onUnsuccessfulDataLoaded = function (errorCode, errorText) {
+  var onErrorLoad = function (errorCode, errorText) {
     throw new Error(window.serverErrors.getErrorByCode(errorCode, errorText));
   };
 
-  var onSuccessfulDataUploaded = function () {
+  var onSuccessUpload = function () {
     window.uploadImage.closeEditImageForm();
     window.uploadImage.showImgUploadSuccessMessage();
   };
 
-  var onUnsuccessfulDataUploaded = function (errorCode, errorText) {
+  var onErrorUpload = function (errorCode, errorText) {
     window.uploadImage.closeEditImageForm();
     window.uploadImage.showImgUploadErrorMessage();
     throw new Error(window.serverErrors.getErrorByCode(errorCode, errorText));
   };
 
-  window.server.getDataFromServer('https://javascript.pages.academy/kekstagram/data', onSuccessfulDataLoaded, onUnsuccessfulDataLoaded);
+  window.server.getDataFromServer('https://javascript.pages.academy/kekstagram/data', onSuccessLoad, onErrorLoad);
 
   // Открытие / Закрытие формы редактирования изображения
   // Поле загрузки изображения
@@ -100,7 +100,7 @@
 
     var url = 'https://javascript.pages.academy/kekstagram';
     var formData = new FormData(imgUploadForm);
-    window.server.uploadDataToServer(url, formData, onSuccessfulDataUploaded, onUnsuccessfulDataUploaded);
+    window.server.uploadDataToServer(url, formData, onSuccessUpload, onErrorUpload);
   });
 
 })();
