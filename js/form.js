@@ -8,6 +8,24 @@
   var textDescription = document.querySelector('.text__description');
 
   window.form = {
+    // Очищает текстовые поля формы
+    clearTextFields: function () {
+      textHashtags.value = '';
+      textDescription.value = '';
+      textHashtags.setCustomValidity('');
+      textDescription.setCustomValidity('');
+      window.form.markInvalidfields(textHashtags);
+      window.form.markInvalidfields(textDescription);
+    },
+
+    markInvalidfields: function (field) {
+      if (!field.checkValidity()) {
+        field.style.boxShadow = '0 0 3px 3px red';
+      } else {
+        field.style.boxShadow = 'none';
+      }
+    },
+
     // Валидация введеных хэштегов
     checkHashtags: function () {
       textHashtags.addEventListener('input', function () {
@@ -39,6 +57,8 @@
         } else {
           textHashtags.setCustomValidity('');
         }
+
+        window.form.markInvalidfields(textHashtags);
       });
 
       textHashtags.addEventListener('focus', function () {
@@ -61,10 +81,14 @@
             extraSimbols = text.length - simbolCount;
             textDescription.setCustomValidity('Удалите лишние ' + extraSimbols + ' символов');
             textDescription.reportValidity();
+          } else {
+            textDescription.setCustomValidity('');
           }
         } else {
           textDescription.setCustomValidity('');
         }
+
+        window.form.markInvalidfields(textDescription);
       });
 
       textDescription.addEventListener('focus', function () {
