@@ -18,40 +18,40 @@
     },
 
     // Ищет объект фотогравии в массиве по индексу
-    findPictureById: function (arr, pictureId) {
+    findPictureById: function (pictures, pictureId) {
 
       var checkId = function (currentElement) {
         return currentElement.index === parseInt(pictureId, 10);
       };
 
-      var index = arr.findIndex(checkId);
+      var index = pictures.findIndex(checkId);
       return index !== -1 ? index : 0;
     },
 
     getRandomPhotos: function (photos, photosCount) {
-      var photosCopy = photos.slice();
-      var newArray = [];
+      var duplicatedPhotos = photos.slice();
+      var randomPhotos = [];
       for (var i = 0; i < photosCount; i++) {
-        var index = window.functions.getRandomNumber(0, photosCopy.length - 1);
-        newArray.push(photosCopy[index]);
-        photosCopy.splice(index, 1);
+        var index = window.functions.getRandomNumber(0, duplicatedPhotos.length - 1);
+        randomPhotos.push(duplicatedPhotos[index]);
+        duplicatedPhotos.splice(index, 1);
       }
 
-      return newArray;
+      return randomPhotos;
     },
 
     sortPhotosByComments: function (photos) {
-      var newArray = photos.slice()
+      var duplicatedPhotos = photos.slice()
       .sort(function (a, b) {
-        var diff = b.comments.length - a.comments.length;
-        if (diff === 0) {
-          diff = b.likes - a.likes;
+        var difference = b.comments.length - a.comments.length;
+        if (difference === 0) {
+          difference = b.likes - a.likes;
         }
 
-        return diff;
+        return difference;
       });
 
-      return newArray;
+      return duplicatedPhotos;
     }
 
   };

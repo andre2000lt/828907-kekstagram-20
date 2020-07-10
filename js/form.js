@@ -29,26 +29,26 @@
     // Валидация введеных хэштегов
     checkHashtags: function () {
       textHashtags.addEventListener('input', function () {
-        var hashTegRe = /^#[0-9a-zA-Zа-яА-я]{1,19}$/;
-        var hashTagsErrorCount = 0;
+        var hashtagRe = /^#[0-9a-zA-Zа-яА-я]{1,19}$/;
+        var hashtagsErrorCount = 0;
 
         var text = textHashtags.value.trim();
         if (text) {
-          var hashtagsArray = text.split(' ');
+          var hashtags = text.split(' ');
 
-          for (var i = 0; i < hashtagsArray.length; i++) {
-            if (!hashTegRe.test(hashtagsArray[i])) {
-              hashTagsErrorCount++;
+          for (var i = 0; i < hashtags.length; i++) {
+            if (!hashtagRe.test(hashtags[i])) {
+              hashtagsErrorCount++;
             }
           }
 
-          if (hashTagsErrorCount) {
-            textHashtags.setCustomValidity('Исправьте ошибки в ' + hashTagsErrorCount + ' хэштеге');
+          if (hashtagsErrorCount) {
+            textHashtags.setCustomValidity('Исправьте ошибки в ' + hashtagsErrorCount + ' хэштеге');
             textHashtags.reportValidity();
-          } else if (hashtagsArray.length > 5) {
+          } else if (hashtags.length > 5) {
             textHashtags.setCustomValidity('Не больше 5 хэштегов');
             textHashtags.reportValidity();
-          } else if (window.functions.checkSameHashtags(hashtagsArray)) {
+          } else if (window.functions.checkSameHashtags(hashtags)) {
             textHashtags.setCustomValidity('Удалите одинаковые хэштеги');
             textHashtags.reportValidity();
           } else {

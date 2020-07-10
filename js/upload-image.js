@@ -9,6 +9,12 @@
   // Окно редактирования изображения
   var editImageForm = document.querySelector('.img-upload__overlay');
 
+  // Кнопка закрытия окна редактирования изображения
+  var uploadCancel = document.querySelector('#upload-cancel');
+
+  // Отображает загруженное изображение
+  var imgUploadPreview = document.querySelector('.img-upload__preview img');
+
   // Добавляет в main окно с сообщением о успешной загрузке на сервер изображения
   var createSuccessMessageElement = function () {
     var successTemplate = document.querySelector('#success');
@@ -28,6 +34,48 @@
   };
 
   window.uploadImage = {
+    customizeUserPhoto: function () {
+      var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+
+      // Поле загрузки изображения
+      uploadFile.addEventListener('change', function () {
+        var file = uploadFile.files[0];
+        var fileName = file.name.toLowerCase();
+
+        var isImage = FILE_TYPES.some(function (imageType) {
+          return fileName.endsWith(imageType);
+        });
+
+        if (isImage) {
+          var reader = new FileReader();
+
+          reader.addEventListener('load', function () {
+            imgUploadPreview.src = reader.result;
+            window.uploadImage.openEditImageForm();
+          });
+
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // Закрытие формы редактирования изображения
+      uploadCancel.addEventListener('click', function () {
+        window.uploadImage.closeEditImageForm();
+      });
+
+      // Изменение масштаба изображения
+      window.imageEffects.changePictureScale(25);
+
+      // Наложение эффектов на изображение
+      window.imageEffects.putEffectOnPicture();
+
+      // Валидация хэштегов
+      window.form.checkHashtags();
+
+      // Валидация описания изображения
+      window.form.checkPhotoDescription(140);
+    },
+
     // Обработчик нажатия клавиши ESC (Для закрытия формы редактирования картинки)
     onEditImageFormPressEsc: function (evt) {
       if (evt.key === 'Escape') {
@@ -57,7 +105,7 @@
     },
 
     // Показывает окно с сообщением об успешной загрузке на сервер изображения
-    showImgUploadSuccessMessage: function () {
+    showSuccessMessage: function () {
       if (!document.querySelector('.success')) {
         createSuccessMessageElement();
       }
@@ -89,7 +137,7 @@
     },
 
     // Показывает окно с сообщением об ошибке при загрузке на сервер изображения
-    showImgUploadErrorMessage: function () {
+    showErrorMessage: function () {
       if (!document.querySelector('.error')) {
         createErrorMessageElement();
       }

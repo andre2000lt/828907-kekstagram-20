@@ -8,6 +8,9 @@
     // Рендерим миниатюры из массива объектов изображений
     window.thumbnails.renderPhotos(allPhotos);
 
+    // Увеличиваем выбранную миниатюру по клику или нажатию Enter
+    window.thumbnails.enlargePicture(allPhotos);
+
     // Показываем фильтры фотографий на главной странице
     var imgFiltersBlock = document.querySelector('.img-filters');
     imgFiltersBlock.classList.remove('img-filters--inactive');
@@ -40,7 +43,9 @@
       if (evt.target.classList.contains('img-filters__button')) {
         var filterButtons = imgFilters.querySelectorAll('.img-filters__button');
         filterButtons.forEach(function (button) {
-          button.classList.remove('img-filters__button--active');
+          if (button.classList.contains('img-filters__button--active')) {
+            button.classList.remove('img-filters__button--active');
+          }
         });
 
         evt.target.classList.add('img-filters__button--active');
@@ -57,42 +62,18 @@
 
   var onSuccessUpload = function () {
     window.uploadImage.closeEditImageForm();
-    window.uploadImage.showImgUploadSuccessMessage();
+    window.uploadImage.showSuccessMessage();
   };
 
   var onErrorUpload = function (errorCode, errorText) {
     window.uploadImage.closeEditImageForm();
-    window.uploadImage.showImgUploadErrorMessage();
+    window.uploadImage.showErrorMessage();
     throw new Error(window.serverErrors.getErrorByCode(errorCode, errorText));
   };
 
-  window.server.getDataFromServer('https://javascript.pages.academy/kekstagram/data', onSuccessLoad, onErrorLoad);
+  window.server.getData('https://javascript.pages.academy/kekstagram/data', onSuccessLoad, onErrorLoad);
 
-  // Открытие / Закрытие формы редактирования изображения
-  // Поле загрузки изображения
-  var uploadFile = document.querySelector('#upload-file');
-  uploadFile.addEventListener('change', function () {
-    window.uploadImage.openEditImageForm();
-  });
-
-  // Закрытие формы редактирования изображения
-  // Кнопка закрытия окна редактирования изображения
-  var uploadCancel = document.querySelector('#upload-cancel');
-  uploadCancel.addEventListener('click', function () {
-    window.uploadImage.closeEditImageForm();
-  });
-
-  // Изменение масштаба изображения
-  window.imageEffects.changePictureScale();
-
-  // Наложение эффектов на изображение
-  window.imageEffects.putEffectOnPicture();
-
-  // Валидация хэштегов
-  window.form.checkHashtags();
-
-  // Валидация описания изображения
-  window.form.checkPhotoDescription(140);
+  window.uploadImage.customizeUserPhoto();
 
   var imgUploadForm = document.querySelector('.img-upload__form');
   imgUploadForm.addEventListener('submit', function (evt) {
@@ -100,9 +81,7 @@
 
     var url = 'https://javascript.pages.academy/kekstagram';
     var formData = new FormData(imgUploadForm);
-    window.server.uploadDataToServer(url, formData, onSuccessUpload, onErrorUpload);
+    window.server.uploadData(url, formData, onSuccessUpload, onErrorUpload);
   });
 
 })();
-
-

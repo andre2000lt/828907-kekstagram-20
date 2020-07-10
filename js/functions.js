@@ -1,6 +1,10 @@
 'use strict';
 
 (function () {
+  var HUNDRED_PERCENT = 100;
+
+  var SCALE_MAX_VALUE = 1;
+
   var body = document.querySelector('body');
 
   window.functions = {
@@ -19,11 +23,11 @@
     },
 
     // Ищет одинаковые строки в массиве
-    checkSameHashtags: function (arr) {
-      for (var i = 0; i < arr.length - 1; i++) {
-        for (var j = i + 1; j < arr.length; j++) {
-          var re = new RegExp('^' + arr[i] + '$', 'i');
-          if (re.test(arr[j])) {
+    checkSameHashtags: function (hashtegs) {
+      for (var i = 0; i < hashtegs.length - 1; i++) {
+        for (var j = i + 1; j < hashtegs.length; j++) {
+          var re = new RegExp('^' + hashtegs[i] + '$', 'i');
+          if (re.test(hashtegs[j])) {
             return true;
           }
         }
@@ -44,19 +48,11 @@
     },
 
     // Преобразует число в css свойство scale
-    intToScale: function (intValue) {
-      if (intValue > 100) {
-        intValue = 100;
-      }
-
-      if (intValue < 0) {
-        intValue = 0;
-      }
-
-      if (intValue !== 100) {
+    convertIntToScale: function (intValue) {
+      if (intValue !== HUNDRED_PERCENT) {
         return 'scale(0.' + intValue + ')';
       } else {
-        return 'scale(1)';
+        return 'scale(' + SCALE_MAX_VALUE + ')';
       }
     },
 

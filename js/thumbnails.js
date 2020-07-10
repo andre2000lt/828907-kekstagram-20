@@ -13,7 +13,7 @@
 
   window.thumbnails = {
     // Отображает на странице все фотографии с лайками и количеством комментариев
-    renderPhotos: function (photosArr) {
+    renderPhotos: function (photos) {
       removePhotos();
       var pictureTemplate = document.querySelector('#picture')
       .content
@@ -21,8 +21,8 @@
 
       var picturesFragment = document.createDocumentFragment();
 
-      for (var i = 0; i < photosArr.length; i++) {
-        var photo = photosArr[i];
+      for (var i = 0; i < photos.length; i++) {
+        var photo = photos[i];
 
         var picture = pictureTemplate.cloneNode(true);
         var pictureImg = picture.querySelector('.picture__img');
@@ -38,40 +38,33 @@
       }
 
       thumbnails.appendChild(picturesFragment);
-
-      // Увеличиваем выбранную миниатюру по клику или нажатию Enter
-      window.thumbnails.enlargePicture(photosArr);
     },
 
     // Увеличение миниатюр пользовательских фотографий на главной странице
     enlargePicture: function (allPhotos) {
 
-      var enlargePictureOnEnter = function (evt) {
+      var onPicturePressEnter = function (evt) {
         if (evt.key === 'Enter') {
           var photo = evt.target.children[0];
           var pictureId = window.data.findPictureById(allPhotos, photo.dataset.index);
           window.fullPicture.renderBigPhoto(allPhotos[pictureId]);
-
-          document.addEventListener('keydown', window.fullPicture.closeBigPictureOnEsc);
         }
       };
 
       thumbnails.addEventListener('focusin', function (evt) {
         if (evt.target.className === 'picture') {
-          evt.target.addEventListener('keydown', enlargePictureOnEnter);
+          evt.target.addEventListener('keydown', onPicturePressEnter);
         }
       });
 
       thumbnails.addEventListener('focusout', function (evt) {
-        evt.target.removeEventListener('keydown', enlargePictureOnEnter);
+        evt.target.removeEventListener('keydown', onPicturePressEnter);
       });
 
       thumbnails.addEventListener('click', function (evt) {
         if (evt.target.className === 'picture__img') {
           var pictureId = window.data.findPictureById(allPhotos, evt.target.dataset.index);
           window.fullPicture.renderBigPhoto(allPhotos[pictureId]);
-
-          document.addEventListener('keydown', window.fullPicture.closeBigPictureOnEsc);
         }
       });
     }
@@ -79,5 +72,3 @@
   };
 
 })();
-
-

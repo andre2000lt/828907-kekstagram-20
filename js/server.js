@@ -3,7 +3,7 @@
 (function () {
   window.server = {
 
-    getDataFromServer: function (url, onSuccess, onError) {
+    getData: function (url, onSuccess, onError) {
       var xhr = new XMLHttpRequest();
 
       xhr.addEventListener('load', function () {
@@ -19,7 +19,7 @@
       xhr.send();
     },
 
-    uploadDataToServer: function (url, data, onSuccess, onError) {
+    uploadData: function (url, data, onSuccess, onError) {
       var xhr = new XMLHttpRequest();
 
       xhr.addEventListener('load', function () {

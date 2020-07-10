@@ -3,8 +3,17 @@
 (function () {
   var EFFECT_LINE_WIDTH = 453;
 
+  var HUNDRED_PERCENT = 100;
+
+  var INVERT_MIN_VALUE = 0;
+
+  var BLUR_MAX_VALUE = 3;
+
+  var BRIGHTNESS_MIN_VALUE = 1;
+  var BRIGHTNESS_MAX_VALUE = 3;
+
   // Отображает загруженное изображение
-  var imgUploadPreview = document.querySelector('.img-upload__preview');
+  var imgUploadPreview = document.querySelector('.img-upload__preview img');
 
   // Поле сохраняет масштаб изображения
   var scaleControlValue = document.querySelector('.scale__control--value');
@@ -51,7 +60,7 @@
       effectLevelPin.style.left = newPinPosition + 'px';
       effectLevelDepth.style.width = newPinPosition + 'px';
 
-      var saturation = Math.round((newPinPosition) / EFFECT_LINE_WIDTH * 100);
+      var saturation = Math.round((newPinPosition) / EFFECT_LINE_WIDTH * HUNDRED_PERCENT);
       effectLevelValue.value = saturation;
 
       imgUploadPreview.style.filter = window.imageEffects.convertPercentsToCssEffect(saturation, window.imageEffects.selectedEffect);
@@ -62,48 +71,51 @@
     selectedEffect: 'none',
 
     // Управление масштабом картинки при помощи кнопок + / -
-    changePictureScale: function () {
+    changePictureScale: function (scaleStep) {
       scaleControlSmaller.addEventListener('click', function () {
         var integerValue = parseInt(scaleControlValue.value, 10);
-        if (integerValue > 25) {
-          integerValue -= 25;
+        if (integerValue > scaleStep) {
+          integerValue -= scaleStep;
           scaleControlValue.value = integerValue + '%';
-          imgUploadPreview.style.transform = window.functions.intToScale(integerValue);
+          imgUploadPreview.style.transform = window.functions.convertIntToScale(integerValue);
         }
       });
 
       scaleControlBigger.addEventListener('click', function () {
         var integerValue = parseInt(scaleControlValue.value, 10);
-        if (integerValue < 76) {
-          integerValue += 25;
+        if (integerValue <= HUNDRED_PERCENT - scaleStep) {
+          integerValue += scaleStep;
           scaleControlValue.value = integerValue + '%';
-          imgUploadPreview.style.transform = window.functions.intToScale(integerValue);
+          imgUploadPreview.style.transform = window.functions.convertIntToScale(integerValue);
         }
       });
     },
 
     // Снимает все эффекты с imgUploadPreview
-    removePictureEffects: function () {
+    removeAllEffects: function () {
       var effects = ['chrome', 'sepia', 'marvin', 'phobos', 'heat'];
       for (var i = 0; i < effects.length; i++) {
         var effectClass = 'effects__preview--' + effects[i];
-        imgUploadPreview.classList.remove(effectClass);
+        if (imgUploadPreview.classList.contains(effectClass)) {
+          imgUploadPreview.classList.remove(effectClass);
+          break;
+        }
       }
 
       imgUploadPreview.style.filter = null;
       effectLevelPin.style.left = EFFECT_LINE_WIDTH + 'px';
       effectLevelDepth.style.width = EFFECT_LINE_WIDTH + 'px';
-      effectLevelValue.value = 100;
+      effectLevelValue.value = HUNDRED_PERCENT;
     },
 
     returnDefaultParams: function () {
-      window.imageEffects.removePictureEffects();
+      window.imageEffects.removeAllEffects();
       window.imageEffects.selectedEffect = 'none';
       window.functions.hideElement(effectLevel);
       effectNoneRadio.checked = true;
 
       scaleControlValue.value = '100%';
-      imgUploadPreview.style.transform = window.functions.intToScale(100);
+      imgUploadPreview.style.transform = window.functions.convertIntToScale(HUNDRED_PERCENT);
     },
 
     // Конвертирует проценты в css свойство выбранного эффекта
@@ -111,19 +123,19 @@
       var effectValue = 0;
 
       if (effectName === 'chrome') {
-        effectValue = percentValue / 100;
+        effectValue = percentValue / HUNDRED_PERCENT;
 
         return 'grayscale(' + effectValue + ')';
       }
 
       if (effectName === 'sepia') {
-        effectValue = percentValue / 100;
+        effectValue = percentValue / HUNDRED_PERCENT;
 
         return 'sepia(' + effectValue + ')';
       }
 
       if (effectName === 'marvin') {
-        if (percentValue > 0) {
+        if (percentValue > INVERT_MIN_VALUE) {
           effectValue = percentValue + '%';
         } else {
           effectValue = percentValue;
@@ -133,14 +145,14 @@
       }
 
       if (effectName === 'phobos') {
-        effectValue = percentValue * 3 / 100;
+        effectValue = percentValue * BLUR_MAX_VALUE / HUNDRED_PERCENT;
         effectValue += 'px';
 
         return 'blur(' + effectValue + ')';
       }
 
       if (effectName === 'heat') {
-        effectValue = percentValue * 2 / 100 + 1;
+        effectValue = percentValue * (BRIGHTNESS_MAX_VALUE - BRIGHTNESS_MIN_VALUE) / HUNDRED_PERCENT + BRIGHTNESS_MIN_VALUE;
 
         return 'brightness(' + effectValue + ')';
       }
@@ -153,7 +165,7 @@
 
       effectsList.addEventListener('click', function (evt) {
         if (evt.target.matches('input[type="radio"]')) {
-          window.imageEffects.removePictureEffects();
+          window.imageEffects.removeAllEffects();
           window.imageEffects.selectedEffect = evt.target.value;
 
           if (window.imageEffects.selectedEffect !== 'none') {
