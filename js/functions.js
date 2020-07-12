@@ -23,11 +23,11 @@
     },
 
     // Ищет одинаковые строки в массиве
-    checkSameHashtags: function (hashtegs) {
-      for (var i = 0; i < hashtegs.length - 1; i++) {
-        for (var j = i + 1; j < hashtegs.length; j++) {
-          var re = new RegExp('^' + hashtegs[i] + '$', 'i');
-          if (re.test(hashtegs[j])) {
+    checkSameHashtags: function (hashtags) {
+      for (var i = 0; i < hashtags.length - 1; i++) {
+        for (var j = i + 1; j < hashtags.length; j++) {
+          var re = new RegExp('^' + hashtags[i] + '$', 'i');
+          if (re.test(hashtags[j])) {
             return true;
           }
         }

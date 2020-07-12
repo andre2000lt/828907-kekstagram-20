@@ -43,12 +43,12 @@
     sortPhotosByComments: function (photos) {
       var duplicatedPhotos = photos.slice()
       .sort(function (a, b) {
-        var difference = b.comments.length - a.comments.length;
-        if (difference === 0) {
-          difference = b.likes - a.likes;
+        var diff = b.comments.length - a.comments.length;
+        if (diff === 0) {
+          diff = b.likes - a.likes;
         }
 
-        return difference;
+        return diff;
       });
 
       return duplicatedPhotos;
