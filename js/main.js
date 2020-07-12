@@ -1,6 +1,9 @@
 'use strict';
 
 (function () {
+  var GET_DATA_URL = 'https://javascript.pages.academy/kekstagram/data';
+  var SEND_DATA_URL = 'https://javascript.pages.academy/kekstagram';
+
   var onSuccessLoad = function (serverData) {
     // Генерируем массив объектов изображений
     var allPhotos = window.data.getAllPhotos(serverData);
@@ -71,7 +74,7 @@
     throw new Error(window.serverErrors.getErrorByCode(errorCode, errorText));
   };
 
-  window.server.getData('https://javascript.pages.academy/kekstagram/data', onSuccessLoad, onErrorLoad);
+  window.server.getData(GET_DATA_URL, onSuccessLoad, onErrorLoad);
 
   window.uploadImage.customizeUserPhoto();
 
@@ -79,9 +82,8 @@
   imgUploadForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
 
-    var url = 'https://javascript.pages.academy/kekstagram';
     var formData = new FormData(imgUploadForm);
-    window.server.uploadData(url, formData, onSuccessUpload, onErrorUpload);
+    window.server.uploadData(SEND_DATA_URL, formData, onSuccessUpload, onErrorUpload);
   });
 
 })();

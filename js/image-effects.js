@@ -122,42 +122,37 @@
     convertPercentsToCssEffect: function (percentValue, effectName) {
       var effectValue = 0;
 
-      if (effectName === 'chrome') {
-        effectValue = percentValue / HUNDRED_PERCENT;
+      switch (effectName) {
+        case 'chrome':
+          effectValue = percentValue / HUNDRED_PERCENT;
+          return 'grayscale(' + effectValue + ')';
 
-        return 'grayscale(' + effectValue + ')';
+        case 'sepia':
+          effectValue = percentValue / HUNDRED_PERCENT;
+          return 'sepia(' + effectValue + ')';
+
+        case 'marvin':
+          if (percentValue > INVERT_MIN_VALUE) {
+            effectValue = percentValue + '%';
+          } else {
+            effectValue = percentValue;
+          }
+
+          return 'invert(' + effectValue + ')';
+
+        case 'phobos':
+          effectValue = percentValue * BLUR_MAX_VALUE / HUNDRED_PERCENT;
+          effectValue += 'px';
+
+          return 'blur(' + effectValue + ')';
+
+        case 'heat':
+          effectValue = percentValue * (BRIGHTNESS_MAX_VALUE - BRIGHTNESS_MIN_VALUE) / HUNDRED_PERCENT + BRIGHTNESS_MIN_VALUE;
+          return 'brightness(' + effectValue + ')';
+
+        default:
+          return 'none';
       }
-
-      if (effectName === 'sepia') {
-        effectValue = percentValue / HUNDRED_PERCENT;
-
-        return 'sepia(' + effectValue + ')';
-      }
-
-      if (effectName === 'marvin') {
-        if (percentValue > INVERT_MIN_VALUE) {
-          effectValue = percentValue + '%';
-        } else {
-          effectValue = percentValue;
-        }
-
-        return 'invert(' + effectValue + ')';
-      }
-
-      if (effectName === 'phobos') {
-        effectValue = percentValue * BLUR_MAX_VALUE / HUNDRED_PERCENT;
-        effectValue += 'px';
-
-        return 'blur(' + effectValue + ')';
-      }
-
-      if (effectName === 'heat') {
-        effectValue = percentValue * (BRIGHTNESS_MAX_VALUE - BRIGHTNESS_MIN_VALUE) / HUNDRED_PERCENT + BRIGHTNESS_MIN_VALUE;
-
-        return 'brightness(' + effectValue + ')';
-      }
-
-      return 'none';
     },
 
     // Управление эффектами картинки imgUploadPreview

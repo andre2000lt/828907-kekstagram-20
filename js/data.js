@@ -41,7 +41,8 @@
     },
 
     sortPhotosByComments: function (photos) {
-      var duplicatedPhotos = photos.slice()
+      return photos
+      .slice()
       .sort(function (a, b) {
         var diff = b.comments.length - a.comments.length;
         if (diff === 0) {
@@ -50,8 +51,6 @@
 
         return diff;
       });
-
-      return duplicatedPhotos;
     }
 
   };
